@@ -12,9 +12,11 @@ const Part = (props) => (
   </p>
 )
 
-const Total = ({ total }) => <p>Number of exercises {total}</p>
+const Total = ({ total }) => <b>Number of exercises {total}</b>
 
 const Course = ({ course }) => {
+  console.log(course);
+
 
   return (
     <div>
