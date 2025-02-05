@@ -1,3 +1,4 @@
+// I separated the Course component in a previous step
 const Header = (props) => <h1>{props.course}</h1>
 
 const Content = ({ parts }) => (
