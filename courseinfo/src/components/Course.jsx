@@ -21,6 +21,7 @@ const Course = ({ course }) => {
       <Header course={course.name} />
       <Content parts={course.parts} />
       <Total
+        // I already did reduce in the previous exercise
         total={course.parts.reduce((acc, val) =>
           acc + val.exercises,
           0
