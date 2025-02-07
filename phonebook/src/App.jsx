@@ -1,5 +1,44 @@
 import { useState } from 'react'
 
+const Input = ({ value, text, onChange }) => (
+  <>
+    {text}:{' '}
+    <input
+      value={value}
+      onChange={onChange}
+    />
+  </>
+)
+
+const AddPersonForm = ({ onSubmit, inputs }) => (
+  <form onSubmit={onSubmit}>
+    <div>
+      <h2>add a new</h2>
+      {inputs.map(input => <><Input value={input.value} text={input.text} onChange={input.onChange} /><br /></>)}
+    </div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+)
+
+const Person = ({ person }) => (
+  <tr><th align='left'>{person.name}:</th><td>{person.number}</td></tr>
+)
+
+const Numbers = ({ persons }) => (
+  <div>
+    <h2>Numbers</h2>
+    <div>
+      <table>
+        <tbody>
+          {persons.map(person => <Person key={person.name} person={person} />)}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)
+
 const App = () => {
   const [persons, setPersons] = useState([
     {
@@ -43,40 +82,23 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        search:{' '}
-        <input
-          value={newSearch}
-          onChange={handleSearchChange}
-        />
-      </div>
-      <form onSubmit={addToPhonebook}>
-        <div>
-          <h1>add a new</h1>
-          name:{' '}
-          <input
-            value={newName}
-            onChange={handleNameChange}
-          />
-          <br />
-          number:{' '}
-          <input
-            value={newNumber}
-            onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-        <table>
-          <tbody>
-            {personsToShow.map(person => <tr key={person.name}><th align='left'>{person.name}:</th> <td>{person.number}</td></tr>)}
-          </tbody>
-        </table>
-      </div>
+      <Input value={newSearch} text='search' onChange={handleSearchChange} />
+      <AddPersonForm
+        onSubmit={addToPhonebook}
+        inputs={[
+          {
+            value: newName,
+            text: 'name',
+            onChange: handleNameChange,
+          },
+          {
+            value: newNumber,
+            text: 'number',
+            onChange: handleNumberChange,
+          }
+        ]}
+      />
+      <Numbers persons={personsToShow} />
     </div>
   )
 }
