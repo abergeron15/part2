@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Input = ({ value, text, onChange }) => (
   <>
@@ -14,7 +15,7 @@ const AddPersonForm = ({ onSubmit, inputs }) => (
   <form onSubmit={onSubmit}>
     <div>
       <h2>add a new</h2>
-      {inputs.map(input => <><Input value={input.value} text={input.text} onChange={input.onChange} /><br /></>)}
+      {inputs.map(input => <div key={input.text}><Input value={input.value} text={input.text} onChange={input.onChange} /><br /></div>)}
     </div>
     <div>
       <button type="submit">add</button>
@@ -40,15 +41,22 @@ const Numbers = ({ persons }) => (
 )
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      number: '555 5555'
-    }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+
+  console.log('rendered', persons.length, 'people')
 
   const handleSearchChange = (event) => {
     setNewSearch(event.target.value)
