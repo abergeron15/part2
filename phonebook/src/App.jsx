@@ -24,22 +24,28 @@ const AddPersonForm = ({ onSubmit, inputs }) => (
   </form>
 )
 
-const Person = ({ person }) => (
-  <tr><th align='left'>{person.name}:</th><td>{person.number}</td></tr>
-)
+const Person = ({ person, onDelete }) => {
 
-const Numbers = ({ persons }) => (
-  <div>
-    <h2>Numbers</h2>
+  return (
+    <tr><th align='left'>{person.name}:</th><td>{person.number}</td><td><button onClick={onDelete}>delete</button></td></tr>
+  )
+}
+
+const Numbers = ({ personsToShow, onDelete }) => {
+
+  return (
     <div>
-      <table>
-        <tbody>
-          {persons.map(person => <Person key={person.name} person={person} />)}
-        </tbody>
-      </table>
+      <h2>Numbers</h2>
+      <div>
+        <table>
+          <tbody>
+            {personsToShow.map(person => <Person key={person.name} person={person} onDelete={(event) => onDelete(event, person)} />)}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -75,7 +81,7 @@ const App = () => {
 
     if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
-
+      return
     }
     const newPerson = {
       name: newName,
@@ -84,11 +90,25 @@ const App = () => {
 
     personServices
       .create(newPerson)
-      .then(response => {
-        setPersons(persons.concat(newPerson))
+      .then(personData => {
+        console.log(personData)
+        setPersons(persons.concat(personData))
         setNewName('')
         setNewNumber('')
       })
+  }
+
+  const removeFromPhonebook = (event, person) => {
+    event.preventDefault()
+    console.log(event)
+    if (confirm(`Delete ${person.name}?`)) {
+      personServices
+        .del(person.id)
+        .then(deletedPerson => {
+          console.log('deleted', deletedPerson)
+          setPersons(persons.filter(p => p.id !== deletedPerson.id))
+        })
+    }
   }
 
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()))
@@ -112,7 +132,7 @@ const App = () => {
           }
         ]}
       />
-      <Numbers persons={personsToShow} />
+      <Numbers personsToShow={personsToShow} onDelete={removeFromPhonebook} />
     </div>
   )
 }
