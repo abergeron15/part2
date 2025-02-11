@@ -92,6 +92,9 @@ const App = () => {
             console.log('updated', updatedPerson)
             setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p))
           })
+          .catch(error => {
+            console.log(error)
+          })
       }
       return
     }
@@ -109,6 +112,9 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   const removeFromPhonebook = (event, person) => {
@@ -120,6 +126,9 @@ const App = () => {
         .then(deletedPerson => {
           console.log('deleted', deletedPerson)
           setPersons(persons.filter(p => p.id !== deletedPerson.id))
+        })
+        .catch(error => {
+          console.log(error)
         })
     }
   }
