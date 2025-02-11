@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import personServices from './services/persons'
+
+import './index.css'
+
+
+const Notification = ({ notification }) => {
+  return notification === null
+    ? null
+    : (
+      <div className={notification.type} >
+        {notification.message}
+      </div>
+    )
+}
 
 const Input = ({ value, text, onChange }) => (
   <>
@@ -52,6 +64,9 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [notification, setNotification] = useState({})
+
+  const addPersonSuccess = 'success'
 
   useEffect(() => {
     console.log('effect')
@@ -91,9 +106,23 @@ const App = () => {
           .then(updatedPerson => {
             console.log('updated', updatedPerson)
             setPersons(persons.map(p => p.id === updatedPerson.id ? updatedPerson : p))
+            setNotification({
+              message: `updated ${updatedPerson.name} with number ${updatedPerson.number}`,
+              type: 'success'
+            })
+            setTimeout(() => {
+              setNotification({})
+            }, 3000)
           })
           .catch(error => {
             console.log(error)
+            setNotification({
+              message: `could not update ${person.name}'s number`,
+              type: 'error',
+            })
+            setTimeout(() => {
+              setNotification({})
+            }, 3000)
           })
       }
       return
@@ -111,9 +140,23 @@ const App = () => {
         setPersons(persons.concat(personData))
         setNewName('')
         setNewNumber('')
+        setNotification({
+          message: `added ${updatedPerson.name}`,
+          type: 'success'
+        })
+        setTimeout(() => {
+          setNotification({})
+        }, 3000)
       })
       .catch(error => {
         console.log(error)
+        setNotification({
+          message: `could not add ${newName}`,
+          type: 'error',
+        })
+        setTimeout(() => {
+          setNotification({})
+        }, 3000)
       })
   }
 
@@ -126,9 +169,23 @@ const App = () => {
         .then(deletedPerson => {
           console.log('deleted', deletedPerson)
           setPersons(persons.filter(p => p.id !== deletedPerson.id))
+          setNotification({
+            message: `deleted ${deletedPerson.name}`,
+            type: 'success',
+          })
+          setTimeout(() => {
+            setNotification({})
+          }, 3000)
         })
         .catch(error => {
           console.log(error)
+          setNotification({
+            message: `${person.name} was already deleted`,
+            type: 'error',
+          })
+          setTimeout(() => {
+            setNotification({})
+          }, 3000)
         })
     }
   }
@@ -138,6 +195,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Input value={newSearch} text='search' onChange={handleSearchChange} />
       <AddPersonForm
         onSubmit={addToPhonebook}
